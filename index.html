@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#05060b">
+<meta name="description" content="Meet Astra AI, a personal AI assistant created by Darsh Bhavsar. Explore the future of personal AI.">
+<title>ASTRA — Intelligence in Your Orbit</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --bg:#05060b;
+  --panel:#0b0e18;
+  --white:#f4f5ff;
+  --muted:#9096ad;
+  --blue:#88aaff;
+  --cyan:#78f0ff;
+  --purple:#a78bfa;
+  --line:rgba(190,205,255,.12);
+  --mx:50%;
+  --my:50%;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{
+  background:var(--bg);color:var(--white);
+  font-family:Manrope,system-ui,sans-serif;
+  overflow-x:hidden;line-height:1.6;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-3;pointer-events:none;
+  background:
+    radial-gradient(ellipse at 15% 15%,rgba(49,69,148,.17),transparent 35%),
+    radial-gradient(ellipse at 90% 48%,rgba(87,41,143,.13),transparent 33%),
+    radial-gradient(ellipse at 45% 95%,rgba(26,91,124,.12),transparent 38%),
+    #05060b;
+}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer}
+::selection{background:#9abaff;color:#05060b}
+button:focus-visible,a:focus-visible{outline:2px solid var(--cyan);outline-offset:4px}
+.mono{font-family:"DM Mono",monospace}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+section{position:relative;padding:110px 7%;scroll-margin-top:65px}
+.wrap{max-width:1240px;margin:auto}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  color:#b4c6ff;font:11px "DM Mono",monospace;
+  text-transform:uppercase;letter-spacing:2.2px;
+}
+.eyebrow::before{
+  content:"";width:22px;height:1px;background:var(--cyan);
+  box-shadow:0 0 10px var(--cyan);
+}
+h1,h2,h3{line-height:1.08;letter-spacing:-.055em}
+h2{font-size:clamp(35px,5vw,64px);font-weight:600}
+.section-intro{max-width:590px;color:var(--muted);margin-top:18px;font-size:15px;line-height:1.9}
+.section-head{margin-bottom:52px}
+.gradient-text{
+  background:linear-gradient(110deg,#fff 10%,#a9c6ff 45%,#8af3ff 70%,#c8a8ff);
+  background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:gradientFlow 8s linear infinite;
+}
+@keyframes gradientFlow{to{background-position:200% center}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes pulse{0%,100%{opacity:.45;transform:scale(.96)}50%{opacity:1;transform:scale(1.04)}}
+@keyframes rotate{to{transform:rotate(360deg)}}
+@keyframes reverseRotate{to{transform:rotate(-360deg)}}
+@keyframes blink{50%{opacity:.2}}
+@keyframes scan{0%{top:-10%}100%{top:110%}}
+@keyframes drift{from{transform:translateX(-2%)}to{transform:translateX(2%)}}
+@keyframes reveal{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes orbitPulse{0%,100%{box-shadow:0 0 25px #719bff22}50%{box-shadow:0 0 70px #719bff55}}
+@keyframes introOut{to{opacity:0;visibility:hidden;pointer-events:none}}
+@keyframes noiseShift{0%{transform:translate(0,0)}25%{transform:translate(1%,-1%)}50%{transform:translate(-1%,1%)}75%{transform:translate(1%,1%)}100%{transform:translate(0,0)}}
+
+/* Star canvas and pointer light */
+#starfield{position:fixed;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none}
+.pointer-light{
+  position:fixed;z-index:-1;pointer-events:none;width:380px;height:380px;
+  border-radius:50%;opacity:.12;filter:blur(60px);
+  background:radial-gradient(circle,#769bff,transparent 70%);
+  left:var(--mx);top:var(--my);transform:translate(-50%,-50%);
+  transition:left .15s ease-out,top .15s ease-out;
+}
+.noise{
+  position:fixed;inset:-50%;z-index:10;pointer-events:none;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+  animation:noiseShift .3s steps(2) infinite;
+}
+
+/* Cinematic opening */
+.intro{
+  position:fixed;inset:0;z-index:1000;background:#03040a;
+  display:grid;place-items:center;overflow:hidden;
+  transition:opacity 1s ease,visibility 1s ease;
+}
+.intro.done{opacity:0;visibility:hidden;pointer-events:none}
+.intro-grid{
+  position:absolute;inset:0;opacity:.14;
+  background-image:linear-gradient(#8eafff14 1px,transparent 1px),
+  linear-gradient(90deg,#8eafff14 1px,transparent 1px);
+  background-size:65px 65px;
+  mask-image:radial-gradient(ellipse at center,#000,transparent 75%);
+}
+.intro-core{position:relative;text-align:center;z-index:2}
+.intro-orb{
+  width:145px;height:145px;margin:0 auto 36px;border-radius:50%;position:relative;
+  background:radial-gradient(circle at 35% 27%,#e5f1ff 0%,#9dc4ff 5%,#526bba 18%,#171c40 46%,#070912 68%);
+  box-shadow:0 0 80px #5e86ff45,inset -15px -12px 30px #000;
+  animation:orbitPulse 3s infinite,float 5s ease-in-out infinite;
+}
+.intro-orb::before,.intro-orb::after{
+  content:"";position:absolute;inset:-19px;border:1px solid #8dafff60;
+  border-radius:50%;transform:rotate(-25deg) scaleY(.35);
+}
+.intro-orb::after{inset:-34px;transform:rotate(50deg) scaleY(.22);border-color:#82eeff55}
+.intro h1{font-size:clamp(42px,8vw,82px);font-weight:500;letter-spacing:.28em;padding-left:.28em}
+.intro p{margin-top:18px;color:#9ca8c8;font:10px "DM Mono",monospace;letter-spacing:3px;text-transform:uppercase}
+.intro-progress{height:2px;width:190px;margin:32px auto;background:#252b40;overflow:hidden}
+.intro-progress span{display:block;width:100%;height:100%;background:linear-gradient(90deg,#8eabff,#83f0ff);transform-origin:left;animation:loadBar 3.5s ease-in-out forwards}
+@keyframes loadBar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.skip-intro{position:absolute;right:25px;bottom:25px;background:transparent;border:1px solid #30354b;border-radius:30px;padding:10px 16px;font:10px "DM Mono",monospace;letter-spacing:1px;color:#aab3cc}
+.skip-intro:hover{border-color:#a4c2ff;color:white}
+
+/* Navigation */
+.nav{
+  position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;
+  padding:17px 7%;border-bottom:1px solid transparent;
+  background:rgba(5,6,11,.72);backdrop-filter:blur(20px);
+  transition:border-color .3s,background .3s;
+}
+.nav.scrolled{border-color:var(--line);background:rgba(5,6,11,.9)}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:3px;font-size:16px}
+.brand-mark{
+  width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+  border:1px solid #9cb7ff77;position:relative;
+  background:radial-gradient(circle at 30% 25%,#eaf3ff,#9eb9ff 13%,#171d42 45%,#060810 72%);
+  box-shadow:0 0 18px #779bff32;
+}
+.brand-mark::after{content:"";position:absolute;inset:-5px;border:1px solid #b3c6ff33;border-radius:50%;transform:scaleY(.4) rotate(-35deg)}
+.nav-links{display:flex;align-items:center;gap:28px;font-size:12px;color:#a4aac0}
+.nav-links a:hover{color:white}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-download,.btn-primary{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:12px 18px;border:1px solid #d7e5ff;border-radius:4px;
+  background:linear-gradient(110deg,#eaf0ff,#9ebaff 50%,#d8f7ff);
+  color:#080b17;font-size:12px;font-weight:800;
+  box-shadow:0 0 24px #789dff20;transition:transform .25s,box-shadow .25s;
+}
+.nav-download:hover,.btn-primary:hover{transform:translateY(-3px);box-shadow:0 8px 35px #789dff40}
+.menu-toggle{display:none;background:none;border:1px solid var(--line);padding:8px 11px;border-radius:3px}
+
+/* Hero */
+.hero{min-height:calc(100svh - 67px);display:flex;align-items:center;padding-top:75px;padding-bottom:80px;overflow:hidden}
+.hero-layout{display:grid;grid-template-columns:1.05fr .95fr;gap:35px;align-items:center;width:100%}
+.hero-copy{position:relative;z-index:2}
+.status-line{
+  display:inline-flex;align-items:center;gap:9px;padding:8px 11px;
+  border:1px solid var(--line);background:#11152288;border-radius:2px;
+  font:10px "DM Mono",monospace;letter-spacing:1px;color:#bdc9e9;margin-bottom:30px;
+}
+.status-dot{width:6px;height:6px;background:#8bf4c7;border-radius:50%;box-shadow:0 0 10px #8bf4c7;animation:blink 2s infinite}
+.hero h1{font-size:clamp(52px,7.1vw,100px);font-weight:500;line-height:.99;max-width:780px}
+.hero h1 .line2{display:block;margin-top:9px}
+.hero-sub{max-width:475px;color:#9ba2b8;margin-top:26px;font-size:14px;line-height:1.95}
+.hero-actions{display:flex;gap:13px;align-items:center;flex-wrap:wrap;margin-top:32px}
+.btn-secondary{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:12px 18px;border:1px solid #343a52;background:#0b0d16;
+  color:#dce3f9;font-size:12px;transition:.25s;
+}
+.btn-secondary:hover{border-color:#93adff;transform:translateY(-3px)}
+.arrow{font-size:16px;transition:transform .2s}.btn-primary:hover .arrow,.btn-secondary:hover .arrow{transform:translateX(4px)}
+.hero-foot{display:flex;gap:25px;margin-top:45px;flex-wrap:wrap}
+.hero-foot div{padding-left:12px;border-left:1px solid #5c6f9a}
+.hero-foot strong{display:block;font-size:12px;font-weight:600}
+.hero-foot span{display:block;color:#737c97;font:9px "DM Mono",monospace;margin-top:3px;letter-spacing:.7px}
+.hero-visual{position:relative;min-height:510px;display:grid;place-items:center;isolation:isolate}
+.visual-grid{
+  position:absolute;inset:4%;z-index:-1;opacity:.22;
+  background-image:linear-gradient(#819bff15 1px,transparent 1px),linear-gradient(90deg,#819bff15 1px,transparent 1px);
+  background-size:35px 35px;mask-image:radial-gradient(ellipse at center,#000,transparent 75%);
+}
+.orbit-scene{width:min(100%,490px);aspect-ratio:1;position:relative;display:grid;place-items:center;animation:float 7s ease-in-out infinite}
+.big-orbit{position:absolute;inset:7%;border:1px solid #91aaff3c;border-radius:50%;transform:rotateX(67deg) rotate(-20deg)}
+.big-orbit.two{inset:15%;transform:rotateX(68deg) rotate(55deg);border-color:#9df3ff45}
+.big-orbit.three{inset:0;transform:rotateX(70deg) rotate(-65deg);border-color:#ad8bff40}
+.orbit-dot{position:absolute;width:7px;height:7px;border-radius:50%;background:#b8caff;box-shadow:0 0 17px #93b4ff;top:13%;left:22%}
+.orbit-dot.d2{top:auto;left:auto;right:14%;bottom:27%;background:#a0f6ff;box-shadow:0 0 18px #a0f6ff}
+.orbit-dot.d3{left:76%;top:25%;width:4px;height:4px}
+.core{
+  width:43%;aspect-ratio:1;border-radius:50%;position:relative;overflow:hidden;
+  background:radial-gradient(circle at 33% 23%,#e6f1ff 0%,#a5c8ff 3%,#5c80cf 10%,#24386d 24%,#0b1230 48%,#070912 70%);
+  box-shadow:0 0 50px #779bff24,0 0 120px #596bff15,inset -20px -20px 40px #000b;
+  animation:orbitPulse 5s infinite;
+}
+.core::before{
+  content:"";position:absolute;inset:-25%;border-radius:50%;
+  background:linear-gradient(120deg,transparent 25%,#c0e9ff18 43%,#dbe8ff60 48%,transparent 55%);
+  animation:rotate 9s linear infinite;
+}
+.core::after{
+  content:"";position:absolute;left:10%;top:10%;width:30%;height:20%;
+  border-radius:50%;background:#d9eaff45;filter:blur(13px);transform:rotate(-30deg);
+}
+.core-ring{position:absolute;inset:22%;border:1px solid #bbd1ff42;border-radius:50%;transform:rotateX(68deg) rotate(30deg)}
+.core-label{position:absolute;bottom:5%;left:50%;transform:translateX(-50%);white-space:nowrap;font:9px "DM Mono",monospace;letter-spacing:2px;color:#9aaedb}
+.float-card{
+  position:absolute;padding:12px 14px;background:#0a0d18dd;border:1px solid #a9bfff2b;
+  backdrop-filter:blur(10px);box-shadow:0 10px 50px #0005;z-index:3;min-width:140px;
+  animation:float 5s ease-in-out infinite;
+}
+.float-card .fc-title{font:9px "DM Mono",monospace;letter-spacing:1px;color:#818eaf}
+.float-card strong{display:block;font-size:12px;font-weight:600;margin-top:5px}
+.float-card.left{left:0;top:24%}.float-card.right{right:-2%;bottom:25%;animation-delay:-2s}
+.fc-indicator{display:inline-block;width:5px;height:5px;border-radius:50%;background:#9bf2d4;margin-right:5px;box-shadow:0 0 8px #9bf2d4}
+.scroll-hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);font:9px "DM Mono",monospace;color:#626b86;letter-spacing:2px;display:flex;align-items:center;gap:12px}
+.scroll-hint::after{content:"";width:38px;height:1px;background:#5b688e;animation:drift 1.4s ease-in-out infinite alternate}
+
+/* Moving data strip */
+.ticker{overflow:hidden;border-block:1px solid var(--line);background:#0a0d17a8}
+.ticker-track{display:flex;width:max-content;animation:ticker 34s linear infinite}
+.ticker:hover .ticker-track{animation-play-state:paused}
+.ticker-group{display:flex;align-items:center;gap:36px;padding:18px 18px;white-space:nowrap;font:10px "DM Mono",monospace;letter-spacing:2px;color:#929dbb}
+.ticker-group b{color:#d8e3ff;font-weight:400}
+.ticker-star{color:#87f0ff;font-size:14px}
+@keyframes ticker{to{transform:translateX(-50%)}}
+
+/* Manifesto */
+.manifesto{padding-top:130px;padding-bottom:130px}
+.manifesto-grid{display:grid;grid-template-columns:.65fr 1.35fr;gap:55px;align-items:start}
+.manifesto-label{padding-top:12px}
+.manifesto-copy p{font-size:clamp(25px,4vw,47px);line-height:1.5;letter-spacing:-.04em;color:#656c84}
+.manifesto-copy p span{color:#f1f3ff}
+.manifesto-note{margin-top:35px;font:10px "DM Mono",monospace;color:#7e8ba9;letter-spacing:1.2px}
+
+/* Interactive feature universe */
+.features{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0a0d17a3,#07091050)}
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.feature-card{
+  position:relative;overflow:hidden;min-height:260px;padding:25px 24px;
+  background:linear-gradient(145deg,#111522c9,#090b13d9);
+  border:1px solid #a5baff17;transition:border-color .35s,transform .35s,background .35s;
+  isolation:isolate;
+}
+.feature-card::before{
+  content:"";position:absolute;inset:-1px;z-index:-1;opacity:0;
+  background:radial-gradient(450px circle at var(--cx,50%) var(--cy,50%),#809fff20,transparent 45%);
+  transition:opacity .3s;
+}
+.feature-card:hover{border-color:#a7c1ff5b;transform:translateY(-5px);background:#111626}
+.feature-card:hover::before{opacity:1}
+.feature-number{font:10px "DM Mono",monospace;color:#6c7896;letter-spacing:1px}
+.feature-icon{width:47px;height:47px;margin:27px 0 22px;display:grid;place-items:center;border:1px solid #9fb8ff2d;background:#131a2d;color:#c4d8ff;font-size:21px;position:relative}
+.feature-icon::after{content:"";position:absolute;inset:-5px;border:1px solid #8cb0ff16;animation:pulse 4s infinite}
+.feature-card h3{font-size:19px;letter-spacing:-.6px;font-weight:600}
+.feature-card p{font-size:12px;line-height:1.8;color:#8c95af;margin-top:12px}
+.card-link{display:inline-flex;gap:8px;align-items:center;margin-top:20px;font:10px "DM Mono",monospace;color:#b5caff;letter-spacing:.5px}
+.card-link span{transition:transform .2s}.card-link:hover span{transform:translateX(4px)}
+
+/* Astra lab: interactive chat */
+.lab{overflow:hidden}
+.lab-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:60px;align-items:center}
+.lab-list{display:grid;gap:0;margin-top:35px}
+.lab-option{
+  text-align:left;display:grid;grid-template-columns:40px 1fr 15px;gap:13px;
+  align-items:center;padding:17px 0;border:0;border-bottom:1px solid var(--line);background:transparent;
+  color:#929ab2;transition:color .25s;
+}
+.lab-option.active,.lab-option:hover{color:white}
+.lab-option.active .lab-icon{border-color:#a6c4ff9c;color:#d6e4ff;background:#18223b}
+.lab-icon{width:36px;height:36px;display:grid;place-items:center;border:1px solid #303751;color:#8799c5;transition:.3s}
+.lab-option strong{display:block;font-size:13px;font-weight:600}
+.lab-option small{display:block;font-size:11px;color:#7e879f;margin-top:3px}
+.lab-option .chevron{color:#6d7ba2}
+.lab-screen{
+  position:relative;border:1px solid #a3baff30;background:#080b14;
+  min-height:465px;overflow:hidden;box-shadow:0 25px 100px #0007;
+}
+.lab-screen::before{
+  content:"";position:absolute;top:-50%;left:0;width:100%;height:35%;
+  background:linear-gradient(transparent,#a7c7ff0c,transparent);animation:scan 8s linear infinite;pointer-events:none;
+}
+.screen-top{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);font:10px "DM Mono",monospace;color:#8995b3;letter-spacing:1px}
+.window-dots{display:flex;gap:5px}.window-dots span{width:5px;height:5px;background:#566080;border-radius:50%}.window-dots span:first-child{background:#9ac0ff}
+.chat-body{padding:24px;display:flex;flex-direction:column;gap:17px;min-height:310px}
+.chat-date{text-align:center;font:9px "DM Mono",monospace;color:#56607d;letter-spacing:1px;margin:2px 0 6px}
+.chat-row{display:flex;gap:10px;max-width:93%;animation:reveal .45s ease both}
+.chat-row.user{align-self:flex-end;flex-direction:row-reverse}
+.chat-avatar{flex:0 0 27px;width:27px;height:27px;display:grid;place-items:center;border:1px solid #9ab8ff44;background:#131a30;color:#bed4ff;font-size:10px}
+.chat-row.user .chat-avatar{background:#172235;color:#c2dfff}
+.chat-bubble{padding:12px 14px;background:#101522;border:1px solid #9db7ff1c;color:#c4cbe0;font-size:11px;line-height:1.8}
+.chat-row.user .chat-bubble{background:#18233a;color:#e4ebff;border-color:#8cafff27}
+.chat-bubble b{color:#e7efff;font-weight:600}
+.chat-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chat-tools span{border:1px solid #8ba8ff2b;padding:5px 8px;color:#a5baff;font:9px "DM Mono",monospace}
+.chat-bottom{display:flex;gap:8px;padding:14px;border-top:1px solid var(--line)}
+.chat-input{flex:1;min-width:0;background:#0d111e;border:1px solid #313951;color:#eaf0ff;padding:12px;font-size:11px;outline:none}
+.chat-input:focus{border-color:#92b5ff}
+.chat-send{width:43px;border:1px solid #b7d0ff;background:#b9d1ff;color:#08101e;font-size:17px}
+.chat-hint{font:9px "DM Mono",monospace;color:#68728e;padding:0 14px 13px}
+.lab-disclaimer{font-size:10px;color:#737e9b;margin-top:14px;line-height:1.7}
+
+/* Constellation explorer */
+.explorer{border-top:1px solid var(--line);overflow:hidden}
+.explorer-header{display:flex;justify-content:space-between;gap:20px;align-items:end;flex-wrap:wrap}
+.explorer-map{
+  margin-top:50px;min-height:440px;position:relative;overflow:hidden;
+  border:1px solid #9fb9ff21;background:
+    radial-gradient(ellipse at 50% 50%,#1b275020,transparent 60%),#070a12;
+}
+.explorer-map::before{
+  content:"";position:absolute;inset:0;opacity:.4;
+  background-image:linear-gradient(#8fa8ff0b 1px,transparent 1px),linear-gradient(90deg,#8fa8ff0b 1px,transparent 1px);
+  background-size:45px 45px;
+}
+.map-label{position:absolute;font:9px "DM Mono",monospace;letter-spacing:1.5px;color:#657393}
+.map-label.tl{top:22px;left:22px}.map-label.br{bottom:22px;right:22px}
+.map-center{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:105px;height:105px;border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(circle at 30% 25%,#dceaff,#819fef 10%,#25376a 35%,#080b15 70%);
+  box-shadow:0 0 60px #739bff22;border:1px solid #adc4ff50;
+  font-size:11px;letter-spacing:3px;font-weight:800;
+}
+.map-center::before,.map-center::after{content:"";position:absolute;inset:-24px;border:1px solid #9dbbff2a;border-radius:50%;animation:pulse 5s infinite}
+.map-center::after{inset:-50px;animation-delay:-2s}
+.map-orbit{position:absolute;left:50%;top:50%;width:280px;height:120px;border:1px solid #9fbaff27;border-radius:50%;transform:translate(-50%,-50%) rotate(30deg)}
+.map-orbit.o2{width:450px;height:190px;transform:translate(-50%,-50%) rotate(-28deg)}
+.map-orbit.o3{width:610px;height:260px;transform:translate(-50%,-50%) rotate(68deg)}
+.map-node{
+  position:absolute;z-index:2;transform:translate(-50%,-50%);
+  display:flex;align-items:center;gap:9px;background:#0b101d;border:1px solid #8da9ff3b;
+  padding:10px 13px;color:#b8c8ed;font:10px "DM Mono",monospace;letter-spacing:.3px;
+  transition:.25s;cursor:pointer;white-space:nowrap;
+}
+.map-node::before{content:"";width:5px;height:5px;background:#a6c5ff;border-radius:50%;box-shadow:0 0 10px #a6c5ff}
+.map-node:hover,.map-node.active{background:#17233d;border-color:#b3ccff;color:white;box-shadow:0 0 30px #789cff1c}
+.map-node.n1{left:27%;top:26%}.map-node.n2{left:75%;top:28%}.map-node.n3{left:22%;top:73%}.map-node.n4{left:78%;top:73%}.map-node.n5{left:50%;top:88%}
+.explorer-detail{
+  display:grid;grid-template-columns:150px 1fr auto;gap:20px;align-items:center;
+  padding:24px;border:1px solid var(--line);border-top:0;background:#0b0e18b0;
+}
+.detail-number{font:11px "DM Mono",monospace;color:#7886a8;letter-spacing:1px}
+.explorer-detail h3{font-size:20px;font-weight:600}
+.explorer-detail p{font-size:12px;color:#9099b3;margin-top:7px;line-height:1.8}
+.detail-status{font:9px "DM Mono",monospace;color:#93edcc;white-space:nowrap}
+
+/* Live status / architecture */
+.blueprint{background:#080a12;border-block:1px solid var(--line)}
+.blueprint-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#a4baff1b;border:1px solid #a4baff1b;margin-top:45px}
+.blueprint-item{background:#080b13;padding:25px 22px;min-height:150px;position:relative;overflow:hidden}
+.blueprint-item::after{content:"";position:absolute;left:0;bottom:0;width:0;height:1px;background:var(--cyan);transition:width .6s}
+.blueprint-item:hover::after{width:100%}
+.blueprint-item .bp-code{font:10px "DM Mono",monospace;color:#7382a8;letter-spacing:1px}
+.blueprint-item strong{display:block;margin-top:24px;font-size:14px;font-weight:600}
+.blueprint-item p{font-size:11px;color:#7e88a3;margin-top:8px;line-height:1.7}
+
+/* Timeline */
+.timeline{position:relative;margin-top:50px;max-width:850px}
+.timeline::before{content:"";position:absolute;left:10px;top:10px;bottom:15px;width:1px;background:linear-gradient(#8baeff,#4a3e72,#1c2238)}
+.timeline-item{display:grid;grid-template-columns:30px 1fr;gap:25px;padding:0 0 38px;position:relative}
+.timeline-point{width:21px;height:21px;border:1px solid #a5c1ff;background:#080b14;border-radius:50%;position:relative;z-index:2;display:grid;place-items:center}
+.timeline-point::after{content:"";width:5px;height:5px;border-radius:50%;background:#9fc1ff;box-shadow:0 0 12px #9fc1ff}
+.timeline-content{padding:0 0 25px;border-bottom:1px solid var(--line)}
+.timeline-meta{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font:10px "DM Mono",monospace;color:#8b9bbf;letter-spacing:1px}
+.timeline-tag{padding:4px 7px;border:1px solid #8eafff30;color:#a9c6ff}
+.timeline-content h3{font-size:21px;margin-top:13px;font-weight:600}
+.timeline-content p{max-width:650px;font-size:12px;color:#8a94ae;margin-top:10px;line-height:1.9}
+
+/* Creator */
+.creator{overflow:hidden}
+.creator-layout{display:grid;grid-template-columns:.85fr 1.15fr;gap:75px;align-items:center}
+.creator-art{min-height:440px;position:relative;display:grid;place-items:center;border:1px solid #9ebaff1a;background:radial-gradient(circle at 50% 48%,#29396627,transparent 60%),#080a12;overflow:hidden}
+.creator-art::before{content:"";position:absolute;inset:0;background-image:linear-gradient(#91a9ff0a 1px,transparent 1px),linear-gradient(90deg,#91a9ff0a 1px,transparent 1px);background-size:32px 32px}
+.creator-art::after{content:"";position:absolute;inset:10%;border:1px solid #9db9ff17;border-radius:50%;transform:scaleY(.5) rotate(-35deg)}
+.creator-monogram{position:relative;z-index:2;width:170px;height:170px;border:1px solid #a8c3ff55;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 25%,#1b2d50,#0a0d19 70%);box-shadow:0 0 70px #7d9dff18}
+.creator-monogram span{font-size:54px;font-weight:500;letter-spacing:-5px;background:linear-gradient(135deg,#fff,#9bbaff 60%,#9af4ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.creator-orbit{position:absolute;inset:17%;border:1px solid #9fc3ff4a;border-radius:50%;transform:rotateX(68deg) rotate(35deg);animation:rotate 28s linear infinite}
+.creator-orbit.o2{inset:5%;transform:rotateX(68deg) rotate(-45deg);animation:reverseRotate 35s linear infinite;border-color:#b19aff35}
+.creator-coordinate{position:absolute;left:18px;bottom:17px;font:9px "DM Mono",monospace;color:#657493;letter-spacing:1px}
+.creator-copy h2{font-size:clamp(37px,5vw,60px);margin-top:20px}
+.creator-role{margin-top:16px;color:#b9c9f0;font:11px "DM Mono",monospace;letter-spacing:1.4px;text-transform:uppercase}
+.creator-copy>p{font-size:13px;color:#929bb4;line-height:2;margin-top:24px;max-width:560px}
+.creator-quote{border-left:1px solid #94b2ff;padding:13px 0 13px 18px;margin-top:28px;color:#c8d5f1;font-size:14px;line-height:1.9}
+.creator-facts{display:flex;gap:30px;margin-top:30px;flex-wrap:wrap}
+.creator-facts strong{display:block;font-size:12px}
+.creator-facts span{display:block;font:9px "DM Mono",monospace;color:#7e8ba7;letter-spacing:1px;margin-top:5px}
+
+/* Download CTA */
+.download{padding-top:100px;padding-bottom:120px}
+.download-panel{
+  position:relative;overflow:hidden;padding:clamp(35px,7vw,85px);
+  border:1px solid #a4bfff3b;background:linear-gradient(135deg,#121a2e,#090c17 55%,#0e0c20);
+}
+.download-panel::before{
+  content:"";position:absolute;right:-120px;top:-240px;width:550px;height:550px;border:1px solid #a5c3ff18;border-radius:50%;
+  box-shadow:0 0 0 40px #a5c3ff04,0 0 0 80px #a5c3ff03,0 0 0 120px #a5c3ff02;
+}
+.download-panel::after{
+  content:"";position:absolute;right:7%;top:0;bottom:0;width:1px;
+  background:linear-gradient(transparent,#9fbaff30,transparent);
+}
+.download-inner{position:relative;z-index:2;max-width:650px}
+.download-inner h2{font-size:clamp(38px,6vw,75px);margin-top:20px}
+.download-inner p{max-width:500px;color:#9aa6c4;font-size:13px;line-height:1.9;margin-top:20px}
+.download-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:30px}
+.download-meta{font:10px "DM Mono",monospace;color:#7887a8;margin-top:20px}
+.download-art{
+  position:absolute;right:8%;top:50%;transform:translateY(-50%);width:180px;height:180px;
+  border-radius:50%;background:radial-gradient(circle at 32% 25%,#e6f1ff,#9bbcff 5%,#304a8b 18%,#10152a 45%,#080a12 70%);
+  box-shadow:0 0 90px #779dff2a;animation:float 6s ease-in-out infinite;
+}
+.download-art::before,.download-art::after{content:"";position:absolute;inset:-25px;border:1px solid #a2bfff4d;border-radius:50%;transform:scaleY(.3) rotate(25deg)}
+.download-art::after{inset:-45px;transform:scaleY(.24) rotate(-30deg);border-color:#a0f1ff35}
+
+/* FAQ */
+.faq-layout{display:grid;grid-template-columns:.75fr 1.25fr;gap:65px}
+.faq-list{border-top:1px solid var(--line)}
+.faq-item{border-bottom:1px solid var(--line)}
+.faq-question{width:100%;background:transparent;border:0;text-align:left;padding:22px 0;display:flex;align-items:center;justify-content:space-between;gap:20px;font-size:13px;font-weight:600}
+.faq-plus{font-size:20px;font-weight:400;color:#a7c3ff;transition:transform .3s}
+.faq-answer{max-height:0;overflow:hidden;color:#8d98b2;font-size:12px;line-height:1.9;transition:max-height .4s ease,padding .3s}
+.faq-item.open .faq-answer{max-height:220px;padding:0 25px 22px 0}
+.faq-item.open .faq-plus{transform:rotate(45deg)}
+
+/* Footer */
+.footer{border-top:1px solid var(--line);padding:35px 7% 25px;background:#05060b}
+.footer-main{max-width:1240px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:25px;flex-wrap:wrap}
+.footer-brand p{font-size:11px;color:#7f8aa5;margin-top:8px}
+.footer-links{display:flex;gap:20px;flex-wrap:wrap;font-size:11px;color:#8993ab}
+.footer-links a:hover{color:#d9e6ff}
+.footer-bottom{max-width:1240px;margin:28px auto 0;padding-top:18px;border-top:1px solid #ffffff0c;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#5f6880;font:9px "DM Mono",monospace;letter-spacing:.5px}
+
+/* Scroll reveal and progress */
+.reveal{opacity:0;transform:translateY(25px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.65,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.delay-1{transition-delay:.1s}.delay-2{transition-delay:.2s}.delay-3{transition-delay:.3s}
+.scroll-progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:200;background:linear-gradient(90deg,#8faeff,#8bf0ff,#bd9fff);box-shadow:0 0 10px #8baeff}
+.back-top{
+  position:fixed;right:20px;bottom:20px;width:39px;height:39px;border:1px solid #9eb8ff3d;
+  background:#0a0d17dd;backdrop-filter:blur(10px);z-index:50;display:grid;place-items:center;
+  opacity:0;pointer-events:none;transform:translateY(10px);transition:.3s;color:#bfd0ff;
+}
+.back-top.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+.toast{
+  position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);opacity:0;
+  z-index:300;background:#141d30;border:1px solid #91b4ff55;color:#e5edff;padding:12px 17px;
+  font:11px "DM Mono",monospace;transition:.3s;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* Responsive */
+@media(max-width:950px){
+  section{padding:85px 6%}
+  .hero-layout{grid-template-columns:1fr}
+  .hero-copy{max-width:720px}
+  .hero-visual{min-height:440px}
+  .orbit-scene{max-width:430px}
+  .manifesto-grid,.lab-grid,.creator-layout,.faq-layout{grid-template-columns:1fr;gap:35px}
+  .feature-grid{grid-template-columns:repeat(2,1fr)}
+  .blueprint-grid{grid-template-columns:repeat(2,1fr)}
+  .creator-art{min-height:360px}
+  .download-art{right:5%;opacity:.35}
+  .lab-screen{max-width:720px;width:100%}
+  .explorer-detail{grid-template-columns:100px 1fr}
+  .detail-status{grid-column:2}
+}
+@media(max-width:680px){
+  .nav{padding:14px 5%}
+  .nav-links{
+    display:none;position:absolute;left:0;right:0;top:100%;padding:25px 6%;
+    background:#080a12f5;border-bottom:1px solid var(--line);flex-direction:column;align-items:flex-start;gap:20px;
+  }
+  .nav-links.open{display:flex}
+  .menu-toggle{display:block}
+  .nav-download{padding:10px 12px;font-size:10px}
+  .hero{padding-top:60px;min-height:auto}
+  .hero h1{font-size:clamp(48px,13vw,75px)}
+  .hero-visual{min-height:340px}
+  .orbit-scene{width:min(100%,340px)}
+  .float-card{min-width:120px;padding:9px 10px}
+  .float-card.left{left:-2%;top:20%}.float-card.right{right:-2%;bottom:20%}
+  .hero-foot{gap:18px}
+  .scroll-hint{display:none}
+  section{padding:75px 5%}
+  .feature-grid{grid-template-columns:1fr}
+  .feature-card{min-height:225px}
+  .blueprint-grid{grid-template-columns:1fr 1fr}
+  .blueprint-item{padding:18px 14px;min-height:135px}
+  .explorer-map{min-height:390px}
+  .map-orbit{width:200px;height:95px}
+  .map-orbit.o2{width:320px;height:150px}
+  .map-orbit.o3{width:420px;height:205px}
+  .map-node{font-size:8px;padding:8px 8px;gap:5px}
+  .map-node.n1{left:23%;top:25%}.map-node.n2{left:78%;top:25%}
+  .map-node.n3{left:19%;top:72%}.map-node.n4{left:81%;top:72%}.map-node.n5{left:50%;top:91%}
+  .map-center{width:75px;height:75px;font-size:9px}
+  .explorer-detail{grid-template-columns:1fr;gap:10px;padding:18px}
+  .detail-status{grid-column:auto}
+  .chat-body{padding:16px;min-height:320px}
+  .chat-bubble{font-size:10px}
+  .download-art{right:-40px;top:20%;width:130px;height:130px;opacity:.25}
+  .download-panel{padding:35px 24px}
+  .download-inner h2{font-size:43px}
+  .creator-art{min-height:310px}
+  .creator-monogram{width:135px;height:135px}
+  .creator-monogram span{font-size:45px}
+  .creator-facts{gap:18px}
+  .footer-main{align-items:flex-start;flex-direction:column}
+  .footer-links{gap:15px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+
+<body>
+<canvas id="starfield" aria-hidden="true"></canvas>
+<div class="pointer-light" aria-hidden="true"></div>
+<div class="noise" aria-hidden="true"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- CINEMATIC INTRO -->
+<div class="intro" id="intro" aria-label="Astra introduction">
+  <div class="intro-grid"></div>
+  <div class="intro-core">
+    <div class="intro-orb"></div>
+    <h1>ASTRA</h1>
+    <p>Personal intelligence · Initializing</p>
+    <div class="intro-progress"><span></span></div>
+    <p id="introStatus">Mapping the stars</p>
+  </div>
+  <button class="skip-intro" id="skipIntro">SKIP INTRO ↗</button>
+</div>
+
+<header class="nav" id="navbar">
+  <a href="#home" class="brand" aria-label="Astra home">
+    <span class="brand-mark"></span><span>ASTRA</span>
+  </a>
+  <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+    <a href="#vision">Vision</a>
+    <a href="#features">Explore</a>
+    <a href="#lab">Experience</a>
+    <a href="#universe">Universe</a>
+    <a href="#creator">Creator</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+  <div class="nav-right">
+    <a class="nav-download" href="#download">GET ASTRA ↗</a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  </div>
+</header>
+
+<main>
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="wrap hero-layout">
+    <div class="hero-copy">
+      <div class="status-line"><span class="status-dot"></span> A PERSONAL AI, BUILT WITH INTENTION</div>
+      <h1>Beyond the<br><span class="line2 gradient-text">ordinary.</span></h1>
+      <p class="hero-sub">Meet Astra — a personal AI assistant designed to bring ideas, conversations, and possibilities into one focused space. Your curiosity is the starting point.</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="#download">Explore Astra <span class="arrow">↗</span></a>
+        <a class="btn-secondary" href="#vision">Discover the vision <span class="arrow">↓</span></a>
+      </div>
+      <div class="hero-foot">
+        <div><strong>PERSONAL AI</strong><span>BUILT AROUND YOU</span></div>
+        <div><strong>ANDROID</strong><span>DOWNLOAD AVAILABLE</span></div>
+        <div><strong>INDEPENDENT</strong><span>MADE BY DARSH</span></div>
+      </div>
+    </div>
+
+    <div class="hero-visual" aria-label="Animated Astra cosmic core">
+      <div class="visual-grid"></div>
+      <div class="orbit-scene">
+        <div class="big-orbit"></div><div class="big-orbit two"></div><div class="big-orbit three"></div>
+        <span class="orbit-dot"></span><span class="orbit-dot d2"></span><span class="orbit-dot d3"></span>
+        <div class="core"><div class="core-ring"></div></div>
+        <div class="core-label">ASTRA / CORE 001</div>
+      </div>
+      <div class="float-card left">
+        <div class="fc-title">SYSTEM / IDENTITY</div>
+        <strong><span class="fc-indicator"></span>Astra is online</strong>
+      </div>
+      <div class="float-card right">
+        <div class="fc-title">YOUR NEXT IDEA</div>
+        <strong>Starts with a question.</strong>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">SCROLL TO EXPLORE</div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker" aria-label="Astra principles">
+  <div class="ticker-track">
+    <div class="ticker-group"><b>THINK</b><span class="ticker-star">✳</span> <b>CREATE</b><span class="ticker-star">✳</span> <b>DISCOVER</b><span class="ticker-star">✳</span> <b>IMAGINE</b><span class="ticker-star">✳</span> <b>EXPLORE</b><span class="ticker-star">✳</span> <b>ASTRA</b><span class="ticker-star">✳</span></div>
+    <div class="ticker-group" aria-hidden="true"><b>THINK</b><span class="ticker-star">✳</span> <b>CREATE</b><span class="ticker-star">✳</span> <b>DISCOVER</b><span class="ticker-star">✳</span> <b>IMAGINE</b><span class="ticker-star">✳</span> <b>EXPLORE</b><span class="ticker-star">✳</span> <b>ASTRA</b><span class="ticker-star">✳</span></div>
+  </div>
+</div>
+
+<!-- VISION -->
+<section class="manifesto" id="vision">
+  <div class="wrap manifesto-grid">
+    <div class="manifesto-label reveal">
+      <div class="eyebrow">01 / THE VISION</div>
+      <p class="mono small muted" style="margin-top:22px;line-height:2">A DIFFERENT KIND<br>OF AI EXPERIENCE</p>
+    </div>
+    <div class="manifesto-copy reveal delay-1">
+      <p>Technology should feel less like a machine you operate, and more like <span>a space where your ideas can grow.</span> Astra is an experiment in making personal AI feel thoughtful, expressive, and yours.</p>
+      <div class="manifesto-note">LESS FRICTION. MORE CURIOSITY. ROOM TO IMAGINE.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">02 / EXPLORE ASTRA</div>
+      <h2 style="margin-top:20px">One assistant.<br><span class="gradient-text">Many directions.</span></h2>
+      <p class="section-intro">Explore the ideas behind Astra. Every detail is designed to make the experience feel considered, personal, and ready for discovery.</p>
+    </div>
+    <div class="feature-grid">
+      <article class="feature-card reveal">
+        <div class="feature-number">MODULE / 001</div><div class="feature-icon">✳</div>
+        <h3>AI Conversations</h3><p>Ask questions, brainstorm ideas, explore concepts, and work through thoughts in a dedicated personal assistant experience.</p>
+        <a href="#lab" class="card-link">ENTER THE LAB <span>↗</span></a>
+      </article>
+      <article class="feature-card reveal delay-1">
+        <div class="feature-number">MODULE / 002</div><div class="feature-icon">⌘</div>
+        <h3>Personal Space</h3><p>A focused place to interact with your assistant, with an interface built around clarity, atmosphere, and simplicity.</p>
+        <a href="#lab" class="card-link">SEE THE EXPERIENCE <span>↗</span></a>
+      </article>
+      <article class="feature-card reveal delay-2">
+        <div class="feature-number">MODULE / 003</div><div class="feature-icon">◌</div>
+        <h3>Liquid-Inspired UI</h3><p>Dark surfaces, luminous accents, soft motion, and carefully considered details create Astra's distinct visual language.</p>
+        <a href="#universe" class="card-link">EXPLORE THE DESIGN <span>↗</span></a>
+      </article>
+      <article class="feature-card reveal">
+        <div class="feature-number">MODULE / 004</div><div class="feature-icon">⌁</div>
+        <h3>Curiosity First</h3><p>Use your own questions to explore new topics, develop ideas, and start conversations in a more personal space.</p>
+        <a href="#lab" class="card-link">TRY A QUESTION <span>↗</span></a>
+      </article>
+      <article class="feature-card reveal delay-1">
+        <div class="feature-number">MODULE / 005</div><div class="feature-icon">✧</div>
+        <h3>Built to Evolve</h3><p>Astra is an ongoing independent project, with room for new experiments, improvements, and future capabilities.</p>
+        <a href="#journey" class="card-link">FOLLOW THE JOURNEY <span>↗</span></a>
+      </article>
+      <article class="feature-card reveal delay-2">
+        <div class="feature-number">MODULE / 006</div><div class="feature-icon">↗</div>
+        <h3>Android Access</h3><p>Explore the Android release and install Astra on a compatible device using the download link below.</p>
+        <a href="#download" class="card-link">GET THE ANDROID APP <span>↗</span></a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- INTERACTIVE LAB -->
+<section class="lab" id="lab">
+  <div class="wrap lab-grid">
+    <div class="reveal">
+      <div class="eyebrow">03 / INTERACTIVE LAB</div>
+      <h2 style="margin-top:20px">A glimpse<br>inside <span class="gradient-text">Astra.</span></h2>
+      <p class="section-intro">Choose a prompt on the left and explore a simulated conversation on the right. This is an interactive website preview, not a live connection to the installed app.</p>
+      <div class="lab-list">
+        <button class="lab-option active" data-prompt="ideas">
+          <span class="lab-icon">✳</span><span><strong>Explore an idea</strong><small>Turn a thought into a plan</small></span><span class="chevron">↗</span>
+        </button>
+        <button class="lab-option" data-prompt="learn">
+          <span class="lab-icon">⌘</span><span><strong>Learn something</strong><small>Make a complex topic clearer</small></span><span class="chevron">↗</span>
+        </button>
+        <button class="lab-option" data-prompt="create">
+          <span class="lab-icon">✧</span><span><strong>Imagine something</strong><small>Begin with a creative spark</small></span><span class="chevron">↗</span>
+        </button>
+        <button class="lab-option" data-prompt="travel">
+          <span class="lab-icon">⌁</span><span><strong>Plan an adventure</strong><small>Explore places and possibilities</small></span><span class="chevron">↗</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="reveal delay-1">
+      <div class="lab-screen">
+        <div class="screen-top">
+          <span>ASTRA / CONVERSATION PREVIEW</span>
+          <span><span class="fc-indicator"></span> DEMO MODE</span>
+        </div>
+        <div class="chat-body" id="chatBody" aria-live="polite">
+          <div class="chat-date">A NEW CONVERSATION · JUST NOW</div>
+          <div class="chat-row user"><div class="chat-avatar">D</div><div class="chat-bubble" id="userMessage">Help me turn an idea into something real.</div></div>
+          <div class="chat-row"><div class="chat-avatar">✳</div><div class="chat-bubble" id="assistantMessage">Every great project starts somewhere. Let's give your idea a direction.<br><br><b>Start with three things:</b><br>01 — What do you want to create?<br>02 — Who is it for?<br>03 — What's the smallest first step?<div class="chat-tools"><span>BREAK IT DOWN</span><span>EXPLORE OPTIONS</span></div></div></div>
+        </div>
+        <form class="chat-bottom" id="demoForm">
+          <input class="chat-input" id="demoInput" placeholder="Try a demo question..." autocomplete="off" aria-label="Demo question">
+          <button class="chat-send" type="submit" aria-label="Send demo message">↗</button>
+        </form>
+        <div class="chat-hint">WEBSITE DEMO · SAMPLE RESPONSES ONLY · NOT A LIVE AI CHAT</div>
+      </div>
+      <p class="lab-disclaimer">This interactive preview runs locally in your browser and displays sample responses. It does not send your messages to an AI service.</p>
+    </div>
+  </div>
+</section>
+
+<!-- UNIVERSE EXPLORER -->
+<section class="explorer" id="universe">
+  <div class="wrap">
+    <div class="explorer-header reveal">
+      <div>
+        <div class="eyebrow">04 / THE ASTRA UNIVERSE</div>
+        <h2 style="margin-top:20px">Find your<br><span class="gradient-text">next orbit.</span></h2>
+      </div>
+      <p class="section-intro" style="max-width:390px;margin-top:0">Select any node in the constellation to uncover a different part of the Astra project.</p>
+    </div>
+    <div class="explorer-map reveal">
+      <span class="map-label tl">ASTRA FIELD MAP / 001</span>
+      <span class="map-label br">SELECT A COORDINATE TO EXPLORE ↗</span>
+      <div class="map-orbit"></div><div class="map-orbit o2"></div><div class="map-orbit o3"></div>
+      <div class="map-center">ASTRA</div>
+      <button class="map-node n1 active" data-node="vision">01 / VISION</button>
+      <button class="map-node n2" data-node="design">02 / DESIGN</button>
+      <button class="map-node n3" data-node="creator">03 / CREATOR</button>
+      <button class="map-node n4" data-node="future">04 / FUTURE</button>
+      <button class="map-node n5" data-node="access">05 / ACCESS</button>
+    </div>
+    <div class="explorer-detail reveal">
+      <div class="detail-number" id="nodeNumber">COORDINATE / 01</div>
+      <div><h3 id="nodeTitle">A vision for personal AI</h3><p id="nodeDescription">Astra explores the idea of an assistant that feels personal, approachable, and designed for everyday curiosity.</p></div>
+      <div class="detail-status" id="nodeStatus">● EXPLORING</div>
+    </div>
+  </div>
+</section>
+
+<!-- DESIGN BLUEPRINT -->
+<section class="blueprint" id="blueprint">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">05 / DESIGN BLUEPRINT</div>
+      <h2 style="margin-top:20px">Every detail<br>has <span class="gradient-text">a purpose.</span></h2>
+      <p class="section-intro">Astra's visual direction combines restrained colour, atmospheric depth, and subtle motion to give the interface its own identity.</p>
+    </div>
+    <div class="blueprint-grid reveal">
+      <div class="blueprint-item"><div class="bp-code">DESIGN / 01</div><strong>Cosmic Depth</strong><p>Layered darkness, star fields, and luminous focal points.</p></div>
+      <div class="blueprint-item"><div class="bp-code">DESIGN / 02</div><strong>Living Motion</strong><p>Slow orbital movement, reveals, and responsive interactions.</p></div>
+      <div class="blueprint-item"><div class="bp-code">DESIGN / 03</div><strong>Quiet Typography</strong><p>Clear hierarchy, generous space, and technical micro-labels.</p></div>
+      <div class="blueprint-item"><div class="bp-code">DESIGN / 04</div><strong>Purposeful Contrast</strong><p>Blue-white highlights against a deep, restrained palette.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- JOURNEY -->
+<section id="journey">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">06 / THE JOURNEY</div>
+      <h2 style="margin-top:20px">An idea becomes<br><span class="gradient-text">a project.</span></h2>
+      <p class="section-intro">A look at the path behind Astra, from an initial concept to an independently developed Android experience.</p>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item reveal">
+        <div class="timeline-point"></div><div class="timeline-content">
+          <div class="timeline-meta"><span>CHAPTER 01</span><span class="timeline-tag">THE IDEA</span></div>
+          <h3>Imagining a personal assistant</h3>
+          <p>The project begins with a simple ambition: explore a personal AI experience with its own visual identity and a more atmospheric interface.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="timeline-point"></div><div class="timeline-content">
+          <div class="timeline-meta"><span>CHAPTER 02</span><span class="timeline-tag">THE BUILD</span></div>
+          <h3>Designing and developing Astra</h3>
+          <p>Building the Android application, shaping its interface, connecting services, and iterating through real development and testing.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="timeline-point"></div><div class="timeline-content">
+          <div class="timeline-meta"><span>CHAPTER 03</span><span class="timeline-tag">THE RELEASE</span></div>
+          <h3>Bringing Astra to Android</h3>
+          <p>Making the Android release accessible through a dedicated website, with a clear path to learn about and install the project.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="timeline-point"></div><div class="timeline-content">
+          <div class="timeline-meta"><span>CHAPTER 04</span><span class="timeline-tag">THE NEXT CHAPTER</span></div>
+          <h3>A project that can keep growing</h3>
+          <p>Continue refining the experience, learning from each iteration, and exploring what a personal AI assistant could become next.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDER -->
+<section class="creator" id="creator">
+  <div class="wrap creator-layout">
+    <div class="creator-art reveal" aria-label="Darsh Bhavsar monogram artwork">
+      <div class="creator-orbit"></div><div class="creator-orbit o2"></div>
+      <div class="creator-monogram"><span>DB.</span></div>
+      <div class="creator-coordinate">CREATOR COORDINATE / INDEPENDENT PROJECT</div>
+    </div>
+    <div class="creator-copy reveal delay-1">
+      <div class="eyebrow">07 / THE PERSON BEHIND ASTRA</div>
+      <h2>Built from<br><span class="gradient-text">curiosity.</span></h2>
+      <div class="creator-role">Darsh Bhavsar · Founder · Creator · Developer</div>
+      <p>I'm Darsh Bhavsar, the founder, creator, and developer behind Astra AI. Astra is my independent project to explore personal AI, thoughtful interface design, and the possibilities of building technology with a distinct identity.</p>
+      <p>From shaping the app experience to developing the website, every iteration is an opportunity to learn, experiment, and bring the vision a little closer to reality.</p>
+      <div class="creator-quote">“A big idea doesn't need to begin big. It needs someone willing to start.”</div>
+      <div class="creator-facts">
+        <div><strong>FOUNDER</strong><span>THE VISION</span></div>
+        <div><strong>CREATOR</strong><span>THE CONCEPT</span></div>
+        <div><strong>DEVELOPER</strong><span>THE BUILD</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOWNLOAD -->
+<section class="download" id="download">
+  <div class="wrap">
+    <div class="download-panel reveal">
+      <div class="download-art" aria-hidden="true"></div>
+      <div class="download-inner">
+        <div class="eyebrow">08 / YOUR NEXT STEP</div>
+        <h2>Your orbit.<br><span class="gradient-text">Your Astra.</span></h2>
+        <p>Ready to explore the Android release? Get Astra from the official project download link and begin your own experience.</p>
+        <div class="download-actions">
+          <a class="btn-primary" href="https://github.com/darshbhavsar2008-ops/astra-download/releases/download/v1.0.0/app-release.apk" id="downloadButton">↓ Download for Android <span class="arrow">↗</span></a>
+          <a class="btn-secondary" href="https://github.com/darshbhavsar2008-ops/astra-download/releases" target="_blank" rel="noopener noreferrer">View releases ↗</a>
+        </div>
+        <div class="download-meta">ANDROID APK · V1.0.0 · APPROX. 59 MB</div>
+        <div class="download-meta" style="max-width:470px;line-height:1.8">Only install APKs you trust. Your Android device may ask you to approve installation from your browser or file manager.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap faq-layout">
+    <div class="reveal">
+      <div class="eyebrow">09 / QUESTIONS & ANSWERS</div>
+      <h2 style="margin-top:20px">Before you<br><span class="gradient-text">launch.</span></h2>
+      <p class="section-intro">A few helpful notes about Astra, this website, and the Android download.</p>
+    </div>
+    <div class="faq-list reveal delay-1">
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">What is Astra AI?<span class="faq-plus">+</span></button>
+        <div class="faq-answer">Astra is an independent personal AI assistant project created by Darsh Bhavsar. This website introduces the project and links to its Android release.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">How do I install Astra?<span class="faq-plus">+</span></button>
+        <div class="faq-answer">Tap the Android download button, download the APK, open it on a compatible Android device, and follow the installation prompts. Only install software from sources you trust.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">Does the website demo use a real AI?<span class="faq-plus">+</span></button>
+        <div class="faq-answer">No. The interactive conversation preview uses sample responses in your browser. It is there to explore the concept and does not connect to a live AI service.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">Is Astra always online or offline?<span class="faq-plus">+</span></button>
+        <div class="faq-answer">That depends on the installed app version and the services it uses. Some AI features may require a network connection. Check the app's actual capabilities rather than assuming all features work offline.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">Will the website be updated?<span class="faq-plus">+</span></button>
+        <div class="faq-answer">The website can be updated as the project evolves. New features, release information, and improvements can be added without rebuilding the website from scratch.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">Who created Astra?<span class="faq-plus">+</span></button>
+        <div class="faq-answer">Astra is created and developed by Darsh Bhavsar as an independent personal AI project.</div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="footer-main">
+    <div class="footer-brand">
+      <a href="#home" class="brand"><span class="brand-mark"></span><span>ASTRA</span></a>
+      <p>Personal intelligence. Independent imagination.</p>
+    </div>
+    <div class="footer-links">
+      <a href="#vision">Vision</a><a href="#features">Explore</a><a href="#lab">Experience</a><a href="#creator">Creator</a><a href="#download">Android Download</a><a href="#faq">FAQ</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© <span id="year"></span> ASTRA AI · AN INDEPENDENT PROJECT</span>
+    <span>CREATED BY DARSH BHAVSAR</span>
+    <a href="#home">BACK TO ORBIT ↑</a>
+  </div>
+</footer>
+
+<button class="back-top" id="backTop" aria-label="Back to top">↑</button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Cinematic intro
+  const intro = document.getElementById("intro");
+  const introStatus = document.getElementById("introStatus");
+  const skipIntro = document.getElementById("skipIntro");
+  const introMessages = ["Mapping the stars", "Calibrating the core", "Opening your orbit"];
+  let introTimer;
+  let statusIndex = 0;
+
+  function finishIntro() {
+    clearInterval(introTimer);
+    intro.classList.add("done");
+    document.body.style.overflowX = "hidden";
+  }
+  if (!reduceMotion) {
+    introTimer = setInterval(() => {
+      statusIndex = (statusIndex + 1) % introMessages.length;
+      introStatus.textContent = introMessages[statusIndex];
+    }, 950);
+    setTimeout(finishIntro, 3900);
+  } else {
+    finishIntro();
+  }
+  skipIntro.addEventListener("click", finishIntro);
+
+  // Animated starfield
+  const canvas = document.getElementById("starfield");
+  const ctx = canvas.getContext("2d");
+  let stars = [];
+  let width = 0, height = 0, dpr = 1;
+
+  function createStars() {
+    const count = Math.min(180, Math.floor((width * height) / 6500));
+    stars = Array.from({length: count}, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      r: Math.random() * 1.25 + .2,
+      a: Math.random() * .6 + .15,
+      speed: Math.random() * .12 + .025,
+      phase: Math.random() * Math.PI * 2
+    }));
+  }
+  function resizeCanvas() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = Math.floor(width * dpr);
+    canvas.height = Math.floor(height * dpr);
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    createStars();
+    drawStars(0);
+  }
+  function drawStars(time) {
+    ctx.clearRect(0, 0, width, height);
+    stars.forEach(star => {
+      const twinkle = reduceMotion ? 1 : .68 + Math.sin(time * .0007 + star.phase) * .32;
+      ctx.globalAlpha = star.a * twinkle;
+      ctx.fillStyle = "#c9dcff";
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+      ctx.fill();
+      if (!reduceMotion) {
+        star.y += star.speed;
+        if (star.y > height) { star.y = 0; star.x = Math.random() * width; }
+      }
+    });
+    ctx.globalAlpha = 1;
+    if (!reduceMotion) requestAnimationFrame(drawStars);
+  }
+  resizeCanvas();
+  if (!reduceMotion) requestAnimationFrame(drawStars);
+  window.addEventListener("resize", resizeCanvas);
+
+  // Pointer-following light and feature-card glow
+  if (window.matchMedia("(pointer:fine)").matches && !reduceMotion) {
+    window.addEventListener("pointermove", e => {
+      document.documentElement.style.setProperty("--mx", e.clientX + "px");
+      document.documentElement.style.setProperty("--my", e.clientY + "px");
+    });
+  }
+  document.querySelectorAll(".feature-card").forEach(card => {
+    card.addEventListener("pointermove", e => {
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty("--cx", (e.clientX - rect.left) + "px");
+      card.style.setProperty("--cy", (e.clientY - rect.top) + "px");
+    });
+  });
+
+  // Scroll reveal
+  const revealItems = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {threshold: .12});
+    revealItems.forEach(el => observer.observe(el));
+  } else {
+    revealItems.forEach(el => el.classList.add("visible"));
+  }
+
+  // Navigation and reading progress
+  const navbar = document.getElementById("navbar");
+  const progress = document.getElementById("scrollProgress");
+  const backTop = document.getElementById("backTop");
+  function updateScroll() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const percent = max > 0 ? (window.scrollY / max) * 100 : 0;
+    progress.style.width = percent + "%";
+    navbar.classList.toggle("scrolled", window.scrollY > 20);
+    backTop.classList.toggle("show", window.scrollY > 550);
+  }
+  window.addEventListener("scroll", updateScroll, {passive:true});
+  updateScroll();
+  backTop.addEventListener("click", () => window.scrollTo({top:0,behavior:reduceMotion?"auto":"smooth"}));
+
+  // Mobile menu
+  const menuToggle = document.getElementById("menuToggle");
+  const navLinks = document.getElementById("navLinks");
+  menuToggle.addEventListener("click", () => {
+    const isOpen = navLinks.classList.toggle("open");
+    menuToggle.setAttribute("aria-expanded", String(isOpen));
+    menuToggle.textContent = isOpen ? "✕" : "☰";
+  });
+  navLinks.querySelectorAll("a").forEach(link => link.addEventListener("click", () => {
+    navLinks.classList.remove("open");
+    menuToggle.setAttribute("aria-expanded", "false");
+    menuToggle.textContent = "☰";
+  }));
+
+  // Interactive sample conversation
+  const examples = {
+    ideas: {
+      user: "Help me turn an idea into something real.",
+      assistant: "Every great project starts somewhere. Let's give your idea a direction.<br><br><b>Start with three things:</b><br>01 — What do you want to create?<br>02 — Who is it for?<br>03 — What's the smallest first step?<div class='chat-tools'><span>BREAK IT DOWN</span><span>EXPLORE OPTIONS</span></div>"
+    },
+    learn: {
+      user: "Explain a difficult topic in a simple way.",
+      assistant: "Let's make it easier to understand. Begin with the main idea, then connect it to something familiar.<br><br><b>A useful learning path:</b><br>01 — Understand the basics.<br>02 — Explore a practical example.<br>03 — Test your understanding.<div class='chat-tools'><span>LEARN STEP BY STEP</span><span>GIVE AN EXAMPLE</span></div>"
+    },
+    create: {
+      user: "Give me a starting point for a creative project.",
+      assistant: "Let's turn a blank page into a direction. Choose a mood, a central idea, and one detail people will remember.<br><br><b>Your creative starting kit:</b><br>01 — Pick one central theme.<br>02 — Build a visual language.<br>03 — Make a tiny first version.<div class='chat-tools'><span>FIND A THEME</span><span>BUILD A CONCEPT</span></div>"
+    },
+    travel: {
+      user: "Help me imagine a mountain adventure.",
+      assistant: "Picture a route through quiet mountain roads, changing skies, and landscapes worth slowing down for.<br><br><b>Start planning thoughtfully:</b><br>01 — Choose a destination and season.<br>02 — Check transport and weather.<br>03 — Plan safe stops and essentials.<div class='chat-tools'><span>PLAN A ROUTE</span><span>MAKE A CHECKLIST</span></div>"
+    }
+  };
+  const userMessage = document.getElementById("userMessage");
+  const assistantMessage = document.getElementById("assistantMessage");
+  document.querySelectorAll(".lab-option").forEach(button => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".lab-option").forEach(b => b.classList.remove("active"));
+      button.classList.add("active");
+      const item = examples[button.dataset.prompt];
+      userMessage.textContent = item.user;
+      assistantMessage.innerHTML = item.assistant;
+      document.getElementById("chatBody").animate(
+        [{opacity:.35,transform:"translateY(6px)"},{opacity:1,transform:"translateY(0)"}],
+        {duration:reduceMotion?1:350,easing:"ease-out"}
+      );
+    });
+  });
+
+  // Safe local sample responses; no network calls
+  const demoForm = document.getElementById("demoForm");
+  const demoInput = document.getElementById("demoInput");
+  const chatBody = document.getElementById("chatBody");
+  function escapeHTML(str) {
+    return str.replace(/[&<>"']/g, c => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    })[c]);
+  }
+  demoForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const question = demoInput.value.trim();
+    if (!question) return;
+    const row = document.createElement("div");
+    row.className = "chat-row user";
+    row.innerHTML = '<div class="chat-avatar">D</div><div class="chat-bubble"></div>';
+    row.querySelector(".chat-bubble").textContent = question;
+    chatBody.appendChild(row);
+    const reply = document.createElement("div");
+    reply.className = "chat-row";
+    reply.innerHTML = '<div class="chat-avatar">✳</div><div class="chat-bubble">This is a website preview, so I can only show sample responses here. For your real question, explore the Astra Android app.<div class="chat-tools"><span>EXPLORE ASTRA</span><span>KEEP DISCOVERING</span></div></div>';
+    chatBody.appendChild(reply);
+    demoInput.value = "";
+    chatBody.scrollTop = chatBody.scrollHeight;
+  });
+
+  // Constellation nodes
+  const nodeData = {
+    vision: {number:"COORDINATE / 01",title:"A vision for personal AI",description:"Astra explores the idea of an assistant that feels personal, approachable, and designed for everyday curiosity.",status:"● EXPLORING"},
+    design: {number:"COORDINATE / 02",title:"An interface with identity",description:"Cosmic depth, motion, thoughtful spacing, and luminous details create a distinct visual language for the Astra project.",status:"● DESIGN"},
+    creator: {number:"COORDINATE / 03",title:"The person behind the project",description:"Darsh Bhavsar is the founder, creator, and developer exploring this independent AI assistant project.",status:"● CREATOR"},
+    future: {number:"COORDINATE / 04",title:"Room to keep evolving",description:"Astra is an ongoing project. Future directions depend on development, experimentation, testing, and the capabilities added over time.",status:"● IN PROGRESS"},
+    access: {number:"COORDINATE / 05",title:"Explore the Android release",description:"The current website links to the Android APK release. Review the release details and install only if the app suits your needs.",status:"● ANDROID"}
+  };
+  const nodeTitle = document.getElementById("nodeTitle");
+  const nodeDescription = document.getElementById("nodeDescription");
+  const nodeNumber = document.getElementById("nodeNumber");
+  const nodeStatus = document.getElementById("nodeStatus");
+  document.querySelectorAll(".map-node").forEach(button => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".map-node").forEach(b => b.classList.remove("active"));
+      button.classList.add("active");
+      const data = nodeData[button.dataset.node];
+      nodeNumber.textContent = data.number;
+      nodeTitle.textContent = data.title;
+      nodeDescription.textContent = data.description;
+      nodeStatus.textContent = data.status;
+      const detail = document.querySelector(".explorer-detail");
+      detail.animate([{opacity:.3,transform:"translateY(8px)"},{opacity:1,transform:"translateY(0)"}],{duration:reduceMotion?1:300});
+    });
+  });
+
+  // FAQ accordion
+  document.querySelectorAll(".faq-question").forEach(button => {
+    button.addEventListener("click", () => {
+      const item = button.closest(".faq-item");
+      const shouldOpen = !item.classList.contains("open");
+      document.querySelectorAll(".faq-item").forEach(other => {
+        other.classList.remove("open");
+        other.querySelector(".faq-question").setAttribute("aria-expanded","false");
+      });
+      if (shouldOpen) {
+        item.classList.add("open");
+        button.setAttribute("aria-expanded","true");
+      }
+    });
+  });
+
+  // Footer year
+  document.getElementById("year").textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>
